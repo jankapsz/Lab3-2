@@ -24,7 +24,7 @@ namespace GrafikaSzeminarium
 
         private static float[] arrayOfColors = new float[]
         {
-            1.0f, 0.0f, 0.0f, 1.0f,
+                1.0f, 0.0f, 0.0f, 1.0f,
                 1.0f, 0.0f, 0.0f, 1.0f,
                 1.0f, 0.0f, 0.0f, 1.0f,
                 1.0f, 0.0f, 0.0f, 1.0f,
@@ -175,7 +175,6 @@ namespace GrafikaSzeminarium
 
             Colors = colors;
         }
-
 
         protected virtual void Dispose(bool disposing)
         {

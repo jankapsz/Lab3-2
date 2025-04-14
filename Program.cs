@@ -34,8 +34,21 @@ namespace GrafikaSzeminarium
         private const string ViewPositionVariableName = "uViewPos";
 
         private const string ShinenessVariableName = "uShininess";
-
         private static float shininess = 50;
+
+        private const string AmbientStrengthVariableName = "uAmbientStrength";
+        private static float ambientStrength = 0.1f;
+
+        private const string SpecularStrengthVariableName = "uSpecularStrength";
+        private static float specularStrength = 0.5f;
+
+        private const string DiffuseStrengthVariableName = "uDiffuseStrength";
+        private static float diffuseStrength = 0.5f;
+
+        private static Vector3 lightColor = new Vector3(1f, 1f, 1f);
+
+        private static Vector3 sideColor;
+        private static int sideColorIndex = 0; // 0: red, 1: green, 2: blue, 3: yellow, 4: purple, 5: orange
 
         private static uint program;
 
@@ -189,6 +202,11 @@ namespace GrafikaSzeminarium
             SetUniform3(LightPositionVariableName, new Vector3(0f, 1.2f, 0f));
             SetUniform3(ViewPositionVariableName, new Vector3(camera.Position.X, camera.Position.Y, camera.Position.Z));
             SetUniform1(ShinenessVariableName, shininess);
+            SetUniform1(AmbientStrengthVariableName, ambientStrength);
+            SetUniform1(SpecularStrengthVariableName, specularStrength);
+            SetUniform1(DiffuseStrengthVariableName, diffuseStrength);
+
+            ChangeColor(sideColorIndex);
 
             var viewMatrix = Matrix4X4.CreateLookAt(camera.Position, camera.Target, camera.UpVector);
             SetMatrix(viewMatrix, ViewMatrixVariableName);
@@ -214,6 +232,21 @@ namespace GrafikaSzeminarium
             //ImGuiNET.ImGui.ShowDemoWindow();
             ImGuiNET.ImGui.Begin("Lighting", ImGuiNET.ImGuiWindowFlags.AlwaysAutoResize | ImGuiNET.ImGuiWindowFlags.NoCollapse);
             ImGuiNET.ImGui.SliderFloat("Shininess", ref shininess, 5, 100);
+
+            ImGuiNET.ImGui.SliderFloat("Ambient Strength", ref ambientStrength, 0, 1); //ambientStrength
+            ImGuiNET.ImGui.SliderFloat("Specular Strength", ref specularStrength, 0, 1); //specularStrength
+            ImGuiNET.ImGui.SliderFloat("Diffuse Strength", ref diffuseStrength, 0, 1); //diffuseStrength
+
+            ImGuiNET.ImGui.End();
+
+            //cube side color
+            ImGuiNET.ImGui.Begin("Cube color", ImGuiNET.ImGuiWindowFlags.AlwaysAutoResize | ImGuiNET.ImGuiWindowFlags.NoCollapse);
+            ImGuiNET.ImGui.Combo("Side color", ref sideColorIndex, new string[] { "Red", "Green", "Blue", "Yellow", "Purple", "Orange" }, 6);
+            ImGuiNET.ImGui.End();
+
+            //light color
+            ImGuiNET.ImGui.Begin("Light color", ImGuiNET.ImGuiWindowFlags.AlwaysAutoResize | ImGuiNET.ImGuiWindowFlags.NoCollapse);
+            ImGuiNET.ImGui.SliderFloat3("Light color | RGB", ref lightColor, 0, 1);
             ImGuiNET.ImGui.End();
 
             imGuiController.Render();
@@ -243,6 +276,38 @@ namespace GrafikaSzeminarium
 
             Gl.UniformMatrix3(location, 1, false, (float*)&normalMatrix);
             CheckError();
+        }
+
+        private static void ChangeColor(int colorIndex)
+        {
+            switch (colorIndex)
+            {
+                case 0:
+                    // red
+                    sideColor = new Vector3(1f, 0f, 0f);
+                    break;
+                case 1:
+                    // green
+                    sideColor = new Vector3(0f, 1f, 0f);
+                    break;
+                case 2:
+                    // blue
+                    sideColor = new Vector3(0f, 0f, 1f);
+                    break;
+                case 3:
+                    // yellow
+                    sideColor = new Vector3(1f, 1f, 0f);
+                    break;
+                case 4:
+                    // purple
+                    sideColor = new Vector3(0.5f, 0f, 0.5f);
+                    break;
+                case 5:
+                    // orange
+                    sideColor = new Vector3(1f, 0.5f, 0f);
+                    break;
+            }
+            cube.ChangeColor(Gl, sideColor);
         }
 
         private static unsafe void SetUniform1(string uniformName, float uniformValue)

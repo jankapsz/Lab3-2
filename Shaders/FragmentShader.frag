@@ -6,6 +6,9 @@ uniform vec3 uLightPos;
 uniform vec3 uViewPos;
 
 uniform float uShininess;
+uniform float uAmbientStrength;
+uniform float uSpecularStrength;
+uniform float uDiffuseStrength;
 
 		
 in vec4 outCol;
@@ -14,16 +17,16 @@ in vec3 outWorldPosition;
 
 void main()
 {
-    float ambientStrength = 0.1;
+    float ambientStrength = uAmbientStrength;
     vec3 ambient = ambientStrength * uLightColor;
 
-    float diffuseStrength = 0.3;
+    float diffuseStrength = uDiffuseStrength;
     vec3 norm = normalize(outNormal);
     vec3 lightDir = normalize(uLightPos - outWorldPosition);
     float diff = max(dot(norm, lightDir), 0.0);
     vec3 diffuse = diff * uLightColor * diffuseStrength;
 
-    float specularStrength = 0.6;
+    float specularStrength = uSpecularStrength;
     vec3 viewDir = normalize(uViewPos - outWorldPosition);
     vec3 reflectDir = reflect(-lightDir, norm);
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), uShininess);
